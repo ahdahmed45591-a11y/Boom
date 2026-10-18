@@ -1,0 +1,6 @@
+{
+  "name": "Boom - BRVM Stock Investment Platform",
+  "description": "Comprehensive BRVM West Africa stock trading platform featuring an Android investor mobile app, SGI broker administration portal, real-time matching engine, KYC verification, and transaction auditing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
