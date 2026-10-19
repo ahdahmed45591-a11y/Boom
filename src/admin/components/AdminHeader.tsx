@@ -5,9 +5,10 @@ import type { RedisCacheStats } from '../../types/index.ts';
 interface AdminHeaderProps {
   redisStats: RedisCacheStats;
   pendingKycCount: number;
+  onLogout?: () => void;
 }
 
-export const AdminHeader: React.FC<AdminHeaderProps> = ({ redisStats, pendingKycCount }) => {
+export const AdminHeader: React.FC<AdminHeaderProps> = ({ redisStats, pendingKycCount, onLogout }) => {
   const hitRatio =
     redisStats.hits + redisStats.misses > 0
       ? ((redisStats.hits / (redisStats.hits + redisStats.misses)) * 100).toFixed(1)
@@ -74,6 +75,15 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ redisStats, pendingKyc
           <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-amber-400 shrink-0">
             JMK
           </div>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="ml-1 text-xs text-slate-400 hover:text-rose-400 px-2 py-1 rounded-lg border border-slate-800 hover:border-rose-500/30 transition-colors"
+              title="Déconnexion"
+            >
+              Déconnexion
+            </button>
+          )}
         </div>
       </div>
     </header>

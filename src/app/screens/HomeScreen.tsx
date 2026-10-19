@@ -160,25 +160,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         )}
 
         {/* Quick Action Buttons */}
-        <div className="mt-3 grid grid-cols-3 gap-1.5 text-xs">
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
           <button
             onClick={onOpenCardManager}
-            className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-colors shadow-sm active:scale-[0.98]"
+            className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-colors shadow-sm active:scale-[0.98]"
             title="Recharger le compte par carte bancaire pour acheter des actions"
           >
             <ArrowDownLeft className="w-3.5 h-3.5" />
-            <span className="truncate">Carte (CB)</span>
-          </button>
-          <button
-            onClick={onOpenDeposit}
-            className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition-colors active:scale-[0.98]"
-          >
-            <Wallet className="w-3.5 h-3.5" />
-            <span className="truncate">Wave / OM</span>
+            <span className="truncate">Recharger (CB)</span>
           </button>
           <button
             onClick={() => onNavigateTab('market')}
-            className="flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors shadow-sm active:scale-[0.98]"
+            className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors shadow-sm active:scale-[0.98]"
           >
             <ArrowUpRight className="w-3.5 h-3.5" />
             <span className="truncate">Acheter</span>

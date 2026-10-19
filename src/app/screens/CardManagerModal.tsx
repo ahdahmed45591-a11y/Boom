@@ -15,6 +15,7 @@ import {
   Lock,
   ChevronRight,
   TrendingUp,
+  AlertCircle,
 } from 'lucide-react';
 
 interface CardManagerModalProps {
@@ -358,6 +359,27 @@ export const CardManagerModal: React.FC<CardManagerModalProps> = ({
                   </div>
                 </div>
 
+                {/* KYC Validation Warning Banner */}
+                {(() => {
+                  const kyc = dbEngine.getUserKyc();
+                  if (kyc && kyc.status === 'VERIFIED') return null;
+                  return (
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-bold text-white text-xs">Validation KYC Requise</div>
+                        <div className="text-[11px] text-slate-300 mt-0.5">
+                          {!kyc
+                            ? "Veuillez soumettre vos pièces d'identité (CNI/Passeport, selfie et signature) dans l'onglet KYC."
+                            : kyc.status === 'SUBMITTED'
+                            ? "Votre dossier KYC a été transmis et est en cours de validation par la conformité SGI."
+                            : "Votre dossier KYC nécessite une correction."}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* 3D Secure Guarantee Notice */}
                 <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-2.5 text-[11px] text-slate-400">
                   <Lock className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -370,7 +392,7 @@ export const CardManagerModal: React.FC<CardManagerModalProps> = ({
                   type="button"
                   onClick={handlePerformRecharge}
                   disabled={isProcessing}
-                  className="w-full py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all"
+                  className="w-full py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   {isProcessing ? (
                     <>

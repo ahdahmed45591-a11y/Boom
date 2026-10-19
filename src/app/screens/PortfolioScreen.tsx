@@ -138,17 +138,17 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
         <div className="mt-3 grid grid-cols-2 gap-2">
           <button
             onClick={onOpenCardManager || onOpenDeposit}
-            className="py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
+            className="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
           >
             <CreditCard className="w-3.5 h-3.5" />
-            <span>Recharger Carte (CB)</span>
+            <span>Recharger (CB)</span>
           </button>
           <button
             onClick={onOpenDeposit}
-            className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
+            className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700 flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
           >
             <ArrowDownLeft className="w-3.5 h-3.5" />
-            <span>Wave / MoMo / Virement</span>
+            <span>Virement Bancaire</span>
           </button>
         </div>
       </div>
@@ -289,8 +289,6 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
                     {(
                       [
                         { id: 'CREDIT_CARD', name: 'Carte Bancaire (CB)', desc: 'Visa, Mastercard, GIM' },
-                        { id: 'WAVE', name: 'Wave CI/SN', desc: 'Instantané' },
-                        { id: 'ORANGE_MONEY', name: 'Orange Money', desc: 'Instantané' },
                         { id: 'BANK_WIRE', name: 'Virement SGI', desc: 'BCEAO RTGS' },
                       ] as const
                     ).map(m => (
@@ -342,6 +340,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
                             key={card.id}
                             onClick={() => {
                               setSelectedCardId(card.id);
+                              dbEngine.setDefaultCard(card.id);
                               setDepositError(null);
                             }}
                             className={`p-2.5 rounded-xl border text-xs cursor-pointer flex justify-between items-center transition-all ${

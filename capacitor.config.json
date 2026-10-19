@@ -1,0 +1,7 @@
+{
+  "appId": "com.boom.brvm",
+  "appName": "Boom BRVM",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
+

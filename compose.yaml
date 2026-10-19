@@ -1,0 +1,52 @@
+services:
+  # IP 1 : Backend et base de données
+  backend-db:
+    build: .
+    container_name: boom-backend-db
+    ports:
+      - "8000:3000"
+    environment:
+      - VITE_APP_MODE=ARCHITECTURE
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      boom_net:
+        ipv4_address: 172.20.0.10
+
+  # IP 2 : SGI Boom Capital (Portail Admin)
+  sgi-boom:
+    build: .
+    container_name: boom-sgi-capital
+    ports:
+      - "3001:3000"
+    environment:
+      - VITE_APP_MODE=ADMIN
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      boom_net:
+        ipv4_address: 172.20.0.20
+
+  # IP 3 : Android Mobile Application
+  android-app:
+    build: .
+    container_name: boom-android-mobile
+    ports:
+      - "3002:3000"
+    environment:
+      - VITE_APP_MODE=MOBILE
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      boom_net:
+        ipv4_address: 172.20.0.30
+
+networks:
+  boom_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

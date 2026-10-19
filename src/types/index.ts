@@ -136,7 +136,7 @@ export interface AuthUser {
   isLoggedIn: boolean;
 }
 
-export type DepositMethod = 'CREDIT_CARD' | 'WAVE' | 'ORANGE_MONEY' | 'MTN_MOMO' | 'MOOV_MONEY' | 'BANK_WIRE';
+export type DepositMethod = 'CREDIT_CARD' | 'WAVE' | 'MTN_MOMO' | 'MOOV_MONEY' | 'BANK_WIRE';
 export type DepositStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface DepositRecord {

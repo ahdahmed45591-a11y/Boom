@@ -4,6 +4,7 @@
  */
 
 import { INITIAL_BRVM_STOCKS } from './marketData.ts';
+import scrapedData from './scrapedMarketData.json';
 import type {
   StockQuote,
   TradeOrder,
@@ -104,7 +105,13 @@ class CentralDatabaseEngine {
     },
   ];
 
-  private quotes: StockQuote[] = JSON.parse(JSON.stringify(INITIAL_BRVM_STOCKS));
+  private quotes: StockQuote[] = JSON.parse(
+    JSON.stringify(
+      scrapedData && Array.isArray(scrapedData) && scrapedData.length > 0
+        ? (scrapedData as StockQuote[])
+        : INITIAL_BRVM_STOCKS
+    )
+  );
 
   private portfolio: UserPortfolio = {
     userId: CURRENT_INVESTOR.id,
@@ -247,10 +254,10 @@ class CentralDatabaseEngine {
       id: 'dep-om-100',
       userId: CURRENT_INVESTOR.id,
       investorName: CURRENT_INVESTOR.name,
-      method: 'ORANGE_MONEY',
+      method: 'WAVE',
       amountXof: 1000000,
       phoneNumber: '+225 07 48 92 11 04',
-      referenceCode: 'OM-CI-9948210',
+      referenceCode: 'WV-CI-9948210',
       status: 'APPROVED',
       timestamp: Date.now() - 86400000 * 3,
       approvedAt: Date.now() - 86400000 * 3 + 120000,
@@ -292,6 +299,33 @@ class CentralDatabaseEngine {
   constructor() {
     this.seedRedisCache();
     this.startMarketTickerSimulation();
+    this.syncWithBackend();
+  }
+
+  private async syncWithBackend() {
+    if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
+    const apiUrl = (import.meta.env?.VITE_API_URL as string) || `http://${window.location.hostname}:8000/api`;
+    try {
+      const [resQuotes, resPort, resCards, resOrders, resKyc] = await Promise.all([
+        fetch(`${apiUrl}/quotes`).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(`${apiUrl}/portfolio`).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(`${apiUrl}/cards`).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(`${apiUrl}/orders`).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(`${apiUrl}/kyc`).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]);
+
+      if (resQuotes && Array.isArray(resQuotes) && resQuotes.length > 0) this.quotes = resQuotes;
+      if (resPort && resPort.cashBalanceXof !== undefined) this.portfolio = resPort;
+      if (resCards && Array.isArray(resCards) && resCards.length > 0) this.userCards = resCards;
+      if (resOrders && Array.isArray(resOrders)) this.orders = resOrders;
+      if (resKyc && Array.isArray(resKyc) && resKyc.length > 0) this.kycRecords = resKyc;
+
+      this.seedRedisCache();
+      this.recalculatePortfolioValues();
+      this.notify();
+    } catch {
+      // Backend not running yet, kept default state
+    }
   }
 
   private seedRedisCache() {
@@ -358,6 +392,15 @@ class CentralDatabaseEngine {
   // --- Public Getters ---
   public getQuotes(): StockQuote[] {
     return this.quotes;
+  }
+
+  public updateQuotes(newQuotes: StockQuote[]): void {
+    if (!newQuotes || newQuotes.length === 0) return;
+    this.quotes = JSON.parse(JSON.stringify(newQuotes));
+    this.seedRedisCache();
+    this.recalculatePortfolioValues();
+    wsBroker.publish('market:ticks', 'QUOTES_SYNCED', { count: this.quotes.length });
+    this.notify();
   }
 
   public getQuote(symbol: string): StockQuote | undefined {
@@ -497,6 +540,21 @@ class CentralDatabaseEngine {
     canSwitchCard?: boolean;
     availableCardBalanceXof?: number;
   } {
+    const kyc = this.getUserKyc();
+    if (!kyc || kyc.status !== 'VERIFIED') {
+      const statusMsg = !kyc
+        ? "Veuillez soumettre votre dossier KYC (Pièce d'identité, Selfie et Signature)."
+        : kyc.status === 'SUBMITTED'
+        ? "Votre dossier KYC est en cours d'examen par la conformité SGI. Les dépôts seront débloqués dès validation."
+        : "Votre dossier KYC a été rejeté ou nécessite des informations complémentaires.";
+
+      return {
+        success: false,
+        errorMessage: `Dépôt refusé : Conformité AMF-UMOA non validée. ${statusMsg}`,
+        canSwitchCard: false,
+      };
+    }
+
     const card = this.getCard(cardId);
     if (!card) {
       return { success: false, errorMessage: 'Carte bancaire introuvable', canSwitchCard: true };

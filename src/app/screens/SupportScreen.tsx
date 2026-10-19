@@ -31,7 +31,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ messages }) => {
       } else if (text.toLowerCase().includes('dividende')) {
         reply = 'Les dividendes sont versés directement sur votre compte espèces après l\'Assemblée Générale Ordinaire (AGO) des émetteurs cotés.';
       } else if (text.toLowerCase().includes('wave') || text.toLowerCase().includes('dépôt')) {
-        reply = 'Les règlements par Wave ou Orange Money sont crédités instantanément dès réception de l\'avis de virement par le dépositaire.';
+        reply = 'Les règlements par Wave sont crédités instantanément dès réception de l\'avis de virement par le dépositaire.';
       }
       dbEngine.sendSupportMessage('SGI_SUPPORT', reply);
     }, 1200);

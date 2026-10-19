@@ -39,7 +39,7 @@ export const CashSettlement: React.FC<CashSettlementProps> = ({ deposits }) => {
             Règlement des Dépôts & Rapprochement Bancaire
           </h1>
           <p className="text-xs text-slate-400">
-            Flux Cartes de Crédit (Visa, Mastercard, GIM-UEMOA 3D-Secure), Mobile Money (Wave, Orange Money) & BCEAO RTGS
+            Flux Cartes de Crédit (Visa, Mastercard, GIM-UEMOA 3D-Secure), Mobile Money (Wave) & BCEAO RTGS
           </p>
         </div>
       </div>
